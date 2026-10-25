@@ -153,6 +153,8 @@ details.method p{margin:8px 0 0;font:400 13px/1.55 var(--f-body);color:var(--mut
 .tile .tv{display:flex;justify-content:space-between;font:500 12.5px/1 var(--f-mono)}
 .tile .tv .a{color:var(--c1)} .tile .tv .b{color:var(--c2)}
 .tile svg{display:block;width:100%;height:auto}
+.tile .t1{display:flex;justify-content:space-between;font:400 11px/1 var(--f-mono);color:var(--muted);padding-top:3px;border-top:1px dashed var(--line);margin-top:2px}
+.tile .t1 i{font-style:normal}
 .tile .tm{font:400 10.5px/1.2 var(--f-mono);color:var(--muted)}
 .foot{font:400 12px/1.5 var(--f-mono);color:var(--muted);display:grid;gap:4px}
 .foot a{color:inherit}
@@ -453,7 +455,7 @@ function renderRegions(A, B){
       const p1 = t ? a/t*100 : 0, p2 = t ? b/t*100 : 0;
       const sb = el("div", "bar sm"); sb.append(el("span","a"), el("span","b"), el("i","mid")); setBar(sb, p1, p2);
       row.append(el("span","sg",u), el("span","pa", t ? fmtPct(p1,1) : "-"), sb, el("span","pb", t ? fmtPct(p2,1) : "-"), el("span","u", d ? fmtPct(d.pst,0) + " seç." : "-"));
-      row.title = u + ": " + (d ? fmtInt(a) + " x " + fmtInt(b) + " votos, " + fmtPct(d.pst) + " das seções" : "sem dados");
+      row.title = u + ": " + (d ? fmtInt(a) + " x " + fmtInt(b) + " votos, " + fmtPct(d.pst) + " das seções" : "sem dados") + " | 1º turno: " + A.nome + " " + fmtPct(T1[u][A.n === "13" ? 0 : 1] / T1[u][2] * 100, 1) + ", " + B.nome + " " + fmtPct(T1[u][A.n === "13" ? 1 : 0] / T1[u][2] * 100, 1);
       ufs.append(row);
     });
     card.append(head, split, bar, meta, ufs);
@@ -643,6 +645,10 @@ function renderTiles(A, B){
       const th = el("div", "th"); th.append(el("b", null, u), el("span", "num", d ? fmtPct(d.pst, 0) + " seç." : "-"));
       const a = d && d.vv ? vapOf(d, A.n) / d.vv * 100 : null, b = d && d.vv ? vapOf(d, B.n) / d.vv * 100 : null;
       const tv = el("div", "tv num"); tv.append(el("span", "a", a == null ? "-" : fmtPct(a, 1)), el("span", "b", b == null ? "-" : fmtPct(b, 1)));
+      const r1 = T1[u], iA = A.n === "13" ? 0 : 1;
+      const t1 = el("div", "t1 num");
+      t1.title = "Resultado final do 1º turno em " + UF_NOME[u] + " (sobre todos os votos válidos)";
+      t1.append(el("i", null, fmtPct(r1[iA] / r1[2] * 100, 1)), el("i", null, "1º turno"), el("i", null, fmtPct(r1[1 - iA] / r1[2] * 100, 1)));
       // sparkline: margem (A - B) em p.p. contra % de seções (0 a 100)
       const W = 140, H = 44, pad = 2;
       const svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("width", "100%");
@@ -667,7 +673,7 @@ function renderTiles(A, B){
       }
       svg.setAttribute("aria-label", u + ": " + (pts.length ? "vantagem de " + fmtPct(Math.abs(pts[pts.length-1].m), 1).replace("%", " p.p.") + " para " + (pts[pts.length-1].m >= 0 ? A.nome : B.nome) : "sem dados"));
       const tm = el("div", "tm num", pts.length ? "Vantagem " + fmtPct(Math.abs(pts[pts.length-1].m), 1).replace("%", " p.p.") + " · " + (pts[pts.length-1].m >= 0 ? A.nome.split(" ")[0] : B.nome.split(" ")[0]) : "aguardando");
-      t.append(th, tv, svg, tm);
+      t.append(th, tv, t1, svg, tm);
       t.addEventListener("click", () => { evoKey = u; $("evoSel").value = u; drawEvo(); renderTiles(A, B); document.querySelector(".evo").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start"}); });
       grid.append(t);
     });
