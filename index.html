@@ -115,6 +115,45 @@ button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
 #chart .ax{font:400 11px var(--f-mono);fill:var(--muted)}
 .tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--panel);font:500 12px/1.35 var(--f-mono);padding:7px 9px;border-radius:7px;white-space:nowrap;transform:translate(-50%,-110%)}
 .empty{color:var(--muted);font:400 13px/1.4 var(--f-mono);padding:20px 0}
+/* Projeção */
+.proj{background:var(--panel);border:1px dashed var(--muted);border-radius:14px;padding:20px clamp(16px,3vw,32px);display:grid;gap:16px}
+.proj h2{margin:0;font:700 20px/1.1 var(--f-display);font-stretch:95%}
+.pm{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.pm .side{display:grid;gap:2px}
+.pm .side.r{text-align:right}
+.pm .lbl{font:600 13px/1.2 var(--f-body)}
+.pm .big{font:800 clamp(34px,5.5vw,54px)/1 var(--f-display);font-stretch:80%}
+.pm .side.a .big{color:var(--c1)} .pm .side.b .big{color:var(--c2)}
+.pm small{font:400 12px/1.3 var(--f-mono);color:var(--muted)}
+.pnote{font:400 12.5px/1.45 var(--f-mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 18px}
+.pnote b{color:var(--ink);font-weight:500}
+.tblw{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
+.ptbl{width:100%;border-collapse:collapse;font:400 13px/1.3 var(--f-mono);min-width:560px}
+.ptbl th{font:500 11px/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:right;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+.ptbl th:first-child,.ptbl td:first-child{text-align:left}
+.ptbl td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
+.ptbl tr:last-child td{border-bottom:0}
+.ptbl tr.tot td{font-weight:500;background:color-mix(in srgb,var(--track) 55%,transparent)}
+.ptbl td.a{color:var(--c1)} .ptbl td.b{color:var(--c2)}
+.ptbl td .bar.sm{width:90px;display:inline-flex;vertical-align:middle}
+details.method summary{cursor:pointer;font:600 13px/1.3 var(--f-body)}
+details.method p{margin:8px 0 0;font:400 13px/1.55 var(--f-body);color:var(--muted);max-width:75ch}
+/* Linha do tempo por estado */
+.sel{font:500 13px/1 var(--f-body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
+.sel:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
+.tl{display:grid;gap:14px}
+.tl-reg{display:grid;gap:8px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.tile{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 11px 8px;display:grid;gap:4px;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.tile:hover{border-color:var(--muted)}
+.tile.on{border-color:var(--ink);box-shadow:0 0 0 1px var(--ink)}
+.tile .th{display:flex;justify-content:space-between;align-items:baseline}
+.tile .th b{font:700 16px/1 var(--f-display)}
+.tile .th span{font:400 11px/1 var(--f-mono);color:var(--muted)}
+.tile .tv{display:flex;justify-content:space-between;font:500 12.5px/1 var(--f-mono)}
+.tile .tv .a{color:var(--c1)} .tile .tv .b{color:var(--c2)}
+.tile svg{display:block;width:100%;height:auto}
+.tile .tm{font:400 10.5px/1.2 var(--f-mono);color:var(--muted)}
 .foot{font:400 12px/1.5 var(--f-mono);color:var(--muted);display:grid;gap:4px}
 .foot a{color:inherit}
 .alert{border:1px solid var(--bad);color:var(--bad);background:var(--panel);border-radius:10px;padding:10px 14px;font:500 13px/1.4 var(--f-body)}
@@ -173,6 +212,26 @@ button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
     </div>
   </section>
 
+  <section class="proj" aria-labelledby="projTitle">
+    <div class="br-head">
+      <div>
+        <h2 id="projTitle">Projeção do resultado final</h2>
+        <div class="eyebrow" style="margin-top:7px">Estimativa deste painel com base no 1º turno · não é resultado do TSE</div>
+      </div>
+      <span class="chip num" id="projBase">-</span>
+    </div>
+    <div class="pm" id="projMain"><div class="empty">A projeção aparece quando as primeiras seções forem totalizadas.</div></div>
+    <div><div class="bar" id="projBar"><span class="a"></span><span class="b"></span><i class="mid"></i></div></div>
+    <div class="pnote num" id="projNote"></div>
+    <div class="tblw"><table class="ptbl" id="projTbl"></table></div>
+    <details class="method">
+      <summary>Como a projeção é calculada</summary>
+      <p>Para cada estado, os votos já apurados entram como estão. A parte que falta é estimada a partir do 1º turno: parte-se da divisão entre os dois candidatos naquele estado no 1º turno e aplica-se a variação que a região já mostra nas seções apuradas do 2º turno em relação a essa base. Assim, quem votou em outros candidatos no 1º turno é redistribuído conforme o padrão que a região está mostrando agora.</p>
+      <p>A quantidade de votos válidos que falta em cada estado é estimada pelo eleitorado das seções ainda não totalizadas. Nos estados com quase nada apurado, usa-se o total de votos válidos do 1º turno, ajustado pelo comparecimento observado no país. A faixa mostra o resultado se a variação regional nas seções restantes for 1,5 ponto maior ou menor.</p>
+      <p>Limitação: as primeiras seções apuradas costumam vir de áreas diferentes das últimas, por exemplo capitais antes do interior. A projeção fica mais confiável conforme a apuração avança.</p>
+    </details>
+  </section>
+
   <section>
     <div class="eyebrow" style="margin:4px 2px 10px">Por região · soma dos estados, sem exterior</div>
     <div class="regions" id="regions"></div>
@@ -180,10 +239,22 @@ button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
 
   <section class="evo">
     <div class="br-head">
-      <h3>Evolução no Brasil</h3>
-      <div class="legend" id="legend"></div>
+      <h3 id="evoTitle">Evolução no Brasil</h3>
+      <div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap">
+        <div class="legend" id="legend"></div>
+        <label class="eyebrow" for="evoSel" style="display:flex;gap:8px;align-items:center">Ver <select class="sel" id="evoSel"></select></label>
+      </div>
     </div>
     <div id="chart"><div class="empty">A curva aparece a partir da segunda atualização com urnas apuradas. Cada ponto é uma leitura deste painel, guardada neste navegador.</div></div>
+  </section>
+
+  <section class="tl" aria-labelledby="tlTitle">
+    <div class="br-head">
+      <h3 id="tlTitle" style="margin:0;font:700 18px/1 var(--f-display);font-stretch:92%">Linha do tempo por estado</h3>
+      <span class="eyebrow">Vantagem em pontos percentuais conforme as seções são apuradas · toque para ampliar</span>
+    </div>
+    <div id="tiles"></div>
+    <div class="foot" style="margin-top:-4px"><span>Cada ponto é uma leitura feita por este painel e guardada neste navegador. A linha começa no momento em que a página foi aberta pela primeira vez neste aparelho; o TSE não publica o histórico da apuração.</span></div>
   </section>
 
   <footer class="foot">
@@ -206,6 +277,8 @@ const REGIOES = [
   {id:"S",  nome:"Sul",          ufs:["PR","RS","SC"]}
 ];
 const ALL_UFS = REGIOES.flatMap(r => r.ufs);
+/* 1º turno (eleição 6257), resultado final por UF: [votos do 13, votos do 22, votos válidos] */
+const T1 = {"AC":[134770,302807,469066],"AL":[995459,735718,1818856],"AM":[1046996,976764,2170763],"AP":[212503,212278,464858],"BA":[5664771,2442585,8560291],"BR":[53879538,56104503,119300788],"CE":[3555263,1756850,5617814],"DF":[675627,909616,1772808],"ES":[850028,1233194,2251078],"GO":[1188880,2051888,3827823],"MA":[2566301,1239040,4010439],"MG":[5188936,5777548,11976235],"MS":[516855,873351,1490278],"MT":[581681,1298581,1993288],"PA":[2427237,2163957,4863172],"PB":[1541127,831377,2513747],"PE":[3553971,1738043,5601017],"PI":[1523710,517028,2146394],"PR":[2054597,3945345,6585243],"RJ":[3693021,4966844,9369700],"RN":[1237963,720493,2071898],"RO":[250667,652988,968059],"RR":[74420,231322,325545],"RS":[2294759,3573783,6423046],"SC":[1127168,3000020,4500897],"SE":[856019,417839,1364196],"SP":[9505413,12922023,24882948],"TO":[404009,469321,930447],"ZZ":[157387,143900,330882]};
 const HKEY = "apuracao-6258-hist";
 
 const $ = id => document.getElementById(id);
@@ -220,6 +293,10 @@ const store = {};      // uf -> dados normalizados
 let cands = null;      // [{n, nome, partido, sq}] ordem fixa pelo número
 let hist = [];
 try { hist = JSON.parse(localStorage.getItem(HKEY) || "[]"); } catch(e){ hist = []; }
+const HKEY_UF = "apuracao-6258-hist-uf";
+let histUF = {};
+try { histUF = JSON.parse(localStorage.getItem(HKEY_UF) || "{}") || {}; } catch(e){ histUF = {}; }
+let evoKey = "BR";
 
 function parse(j){
   const list = [];
@@ -232,7 +309,7 @@ function parse(j){
     dg:j.dg, hg:j.hg, stamp:(j.dg||"")+" "+(j.hg||""),
     ts:n(s.ts), st:n(s.st), pst:n(s.pstn || s.pst),
     vv:n(v.vv), vb:n(v.vb), pvb:n(v.pvbn||v.pvb), tvn:n(v.tvn), ptvn:n(v.ptvnn||v.ptvn), tv:n(v.tv),
-    te:n(e.te), a:n(e.a), pa:n(e.pan||e.pa), c:n(e.c),
+    te:n(e.te), est:n(e.est), a:n(e.a), pa:n(e.pan||e.pa), c:n(e.c),
     cands:list
   };
 }
@@ -260,7 +337,7 @@ async function cycle(){
   if (busy) return; busy = true;
   setChip("live", "Atualizando");
   let falhas = 0, brOk = false;
-  const fila = ["BR"].concat(ALL_UFS);
+  const fila = ["BR"].concat(ALL_UFS, ["ZZ"]);
   let i = 0;
   async function worker(){
     while (i < fila.length){
@@ -323,9 +400,13 @@ function render(){
   $("stAb").textContent = short(br.a); $("stAbSub").textContent = fmtPct(br.pa) + " do eleitorado apurado";
 
   renderRegions(A, B);
+  renderProj(A, B, br);
   pushHist(br, A, B);
-  renderChart(A, B);
+  pushHistUF(A, B);
+  fillSelect();
+  drawEvo();
   renderLegend(A, B);
+  renderTiles(A, B);
 }
 
 function setBar(bar, pa, pb){
@@ -393,9 +474,9 @@ function renderLegend(A, B){
   [[A,"--c1"],[B,"--c2"]].forEach(([c,v]) => { const s = el("span"); const i = el("i"); i.style.background = "var(" + v + ")"; s.append(i, document.createTextNode(c.nome)); lg.append(s); });
 }
 
-function renderChart(A, B){
+function renderChart(A, B, hist){
   const host = $("chart");
-  if (hist.length < 2) return;
+  if (hist.length < 2){ host.replaceChildren(el("div", "empty", "A curva aparece a partir da segunda leitura com seções apuradas neste recorte. Cada ponto é uma leitura deste painel, guardada neste navegador.")); return; }
   const W = Math.max(320, host.clientWidth || 800), H = Math.round(Math.min(300, Math.max(200, W * .32)));
   const m = {l:44, r:16, t:12, b:30};
   const xs = hist.map(p => p.pst);
@@ -444,6 +525,156 @@ function renderChart(A, B){
   hit.addEventListener("pointerleave", () => { tip.hidden = true; guide.setAttribute("opacity",0); });
 }
 
+
+/* projeção */
+function projetar(A, B){
+  const iA = A.n === "13" ? 0 : 1;
+  const ufs = ALL_UFS.concat(["ZZ"]);
+  let num = 0, den = 0;
+  ufs.forEach(u => { const d = store[u], t = T1[u]; if (d && t && d.te && d.est){ num += d.vv; den += t[2] * d.est / d.te; } });
+  const turn = den > 0 ? num / den : 1;
+  const base = u => { const t = T1[u]; return t[0] + t[1] ? t[iA] / (t[0] + t[1]) : .5; };
+  const swingOf = list => {
+    let w = 0, s = 0;
+    list.forEach(u => { const d = store[u]; if (!d || !T1[u]) return; const a = vapOf(d, A.n), b = vapOf(d, B.n); if (a + b <= 0) return; s += (a + b) * (a / (a + b) - base(u)); w += a + b; });
+    return w > 0 ? s / w : null;
+  };
+  const swNat = swingOf(ufs);
+  const clamp = x => Math.min(.99, Math.max(.01, x));
+  function uf(u, sw){
+    const d = store[u], t = T1[u];
+    const a = d ? vapOf(d, A.n) : 0, b = d ? vapOf(d, B.n) : 0, vv = d ? d.vv : 0;
+    const fe = d && d.te ? d.est / d.te : 0;
+    const exp = fe >= 0.05 ? vv / fe : Math.max(vv, t[2] * turn);
+    const rem = Math.max(0, exp - vv);
+    const sh = clamp(base(u) + sw), lo = clamp(base(u) + sw - .015), hi = clamp(base(u) + sw + .015);
+    return {a: a + rem * sh, b: b + rem * (1 - sh), aLo: a + rem * lo, aHi: a + rem * hi, rem, ca: a, cb: b};
+  }
+  const sum = list => list.reduce((o, x) => { for (const k in x) o[k] = (o[k] || 0) + x[k]; return o; }, {});
+  const regs = REGIOES.map(R => {
+    const s = swingOf(R.ufs), sw = s == null ? (swNat || 0) : s;
+    const tot = sum(R.ufs.map(u => uf(u, sw)));
+    return Object.assign({nome: R.nome, sw, obs: s != null}, tot);
+  });
+  const zz = uf("ZZ", swNat || 0);
+  const nat = sum(regs.map(r => ({a:r.a, b:r.b, aLo:r.aLo, aHi:r.aHi, rem:r.rem, ca:r.ca, cb:r.cb})).concat([zz]));
+  return {regs, nat, swNat};
+}
+
+function renderProj(A, B, br){
+  const main = $("projMain"), tbl = $("projTbl"), note = $("projNote");
+  $("projBase").textContent = "Base: " + fmtPct(br.pst, 1) + " das seções";
+  if (!br.st){ return; }
+  const P = projetar(A, B), N = P.nat, tot = N.a + N.b;
+  const pa = N.a / tot * 100, pb = N.b / tot * 100;
+  main.replaceChildren();
+  [[A, pa, N.a, "a"], [B, pb, N.b, "b"]].forEach(([c, p, v, k], i) => {
+    const s = el("div", "side " + k + (i ? " r" : ""));
+    s.append(el("span", "lbl", c.nome), el("span", "big num", fmtPct(p)), el("small", "num", "≈ " + fmtInt(v) + " votos projetados"));
+    main.append(s);
+  });
+  setBar($("projBar"), pa, pb);
+  const lo = N.aLo / tot * 100, hi = N.aHi / tot * 100;
+  note.replaceChildren();
+  const lead = N.a >= N.b ? A : B;
+  const add = (t, b) => { const sp = el("span", null, t); if (b){ sp.append(el("b", null, b)); } note.append(sp); };
+  add("Diferença projetada: ", fmtInt(Math.abs(N.a - N.b)) + " votos para " + lead.nome);
+  add("Faixa de " + A.nome + ": ", fmtPct(lo, 1) + " a " + fmtPct(hi, 1));
+  add("Votos válidos ainda a apurar (estimativa): ", short(N.rem));
+
+  tbl.replaceChildren();
+  const thead = el("thead"), hr = el("tr");
+  ["Região", "Apurado " + A.nome, "Projeção " + A.nome, "", "Projeção " + B.nome, "Variação vs 1º turno", "A apurar (est.)"].forEach(h => hr.append(el("th", null, h)));
+  thead.append(hr); tbl.append(thead);
+  const tb = el("tbody");
+  const row = (nome, r, sw, obs, isTot) => {
+    const t = r.a + r.b, ca = r.ca + r.cb;
+    const tr = el("tr", isTot ? "tot" : "");
+    const pA = r.a / t * 100, pB = r.b / t * 100;
+    const sb = el("div", "bar sm"); sb.append(el("span", "a"), el("span", "b"), el("i", "mid")); setBar(sb, pA, pB);
+    const tdBar = el("td"); tdBar.append(sb);
+    const swTxt = sw == null ? "-" : (Math.abs(sw) < .0005 ? "0,0 p.p." : "+" + fmtPct(Math.abs(sw) * 100, 1).replace("%", " p.p. ") + (sw > 0 ? A.nome : B.nome)) + (obs === false ? " *" : "");
+    tr.append(el("td", null, nome), el("td", "a", ca ? fmtPct(r.ca / ca * 100, 1) : "-"), el("td", "a", fmtPct(pA, 1)), tdBar, el("td", "b", fmtPct(pB, 1)), el("td", null, swTxt), el("td", null, short(r.rem)));
+    tb.append(tr);
+  };
+  P.regs.forEach(r => row(r.nome, r, r.sw, r.obs, false));
+  row("Brasil (com exterior)", N, P.swNat, true, true);
+  tbl.append(tb);
+}
+
+
+/* histórico por estado */
+function pushHistUF(A, B){
+  let changed = false;
+  ALL_UFS.forEach(u => {
+    const d = store[u]; if (!d || !d.st || !d.vv) return;
+    const arr = histUF[u] || (histUF[u] = []);
+    const last = arr[arr.length - 1];
+    if (last && last.k === d.stamp) return;
+    arr.push({k:d.stamp, h:d.hg, pst:+d.pst.toFixed(2), a:+(vapOf(d,A.n)/d.vv*100).toFixed(3), b:+(vapOf(d,B.n)/d.vv*100).toFixed(3)});
+    if (arr.length > 300) histUF[u] = arr.slice(-300);
+    changed = true;
+  });
+  if (changed){ try { localStorage.setItem(HKEY_UF, JSON.stringify(histUF)); } catch(e){} }
+}
+const UF_NOME = {AC:"Acre",AL:"Alagoas",AM:"Amazonas",AP:"Amapá",BA:"Bahia",CE:"Ceará",DF:"Distrito Federal",ES:"Espírito Santo",GO:"Goiás",MA:"Maranhão",MG:"Minas Gerais",MS:"Mato Grosso do Sul",MT:"Mato Grosso",PA:"Pará",PB:"Paraíba",PE:"Pernambuco",PI:"Piauí",PR:"Paraná",RJ:"Rio de Janeiro",RN:"Rio Grande do Norte",RO:"Rondônia",RR:"Roraima",RS:"Rio Grande do Sul",SC:"Santa Catarina",SE:"Sergipe",SP:"São Paulo",TO:"Tocantins"};
+function fillSelect(){
+  const sel = $("evoSel"); if (sel.options.length) return;
+  sel.append(new Option("Brasil", "BR"));
+  REGIOES.forEach(R => { const g = document.createElement("optgroup"); g.label = R.nome; R.ufs.slice().sort().forEach(u => g.append(new Option(UF_NOME[u] + " (" + u + ")", u))); sel.append(g); });
+  sel.value = evoKey;
+  sel.addEventListener("change", () => { evoKey = sel.value; drawEvo(); if (cands) renderTiles(cands[0], cands[1]); });
+}
+function drawEvo(){
+  if (!cands) return;
+  $("evoTitle").textContent = "Evolução " + (evoKey === "BR" ? "no Brasil" : "em " + UF_NOME[evoKey]);
+  renderChart(cands[0], cands[1], evoKey === "BR" ? hist : (histUF[evoKey] || []));
+}
+function renderTiles(A, B){
+  const host = $("tiles"); host.replaceChildren();
+  const NS = "http://www.w3.org/2000/svg";
+  REGIOES.forEach(R => {
+    const wrap = el("div", "tl-reg"); wrap.append(el("div", "eyebrow", R.nome));
+    const grid = el("div", "tiles");
+    R.ufs.slice().sort((x,y) => (store[y] ? store[y].te : 0) - (store[x] ? store[x].te : 0)).forEach(u => {
+      const d = store[u], arr = histUF[u] || [];
+      const t = el("button", "tile" + (evoKey === u ? " on" : "")); t.type = "button";
+      t.setAttribute("aria-label", "Ampliar a evolução de " + UF_NOME[u]);
+      const th = el("div", "th"); th.append(el("b", null, u), el("span", "num", d ? fmtPct(d.pst, 0) + " seç." : "-"));
+      const a = d && d.vv ? vapOf(d, A.n) / d.vv * 100 : null, b = d && d.vv ? vapOf(d, B.n) / d.vv * 100 : null;
+      const tv = el("div", "tv num"); tv.append(el("span", "a", a == null ? "-" : fmtPct(a, 1)), el("span", "b", b == null ? "-" : fmtPct(b, 1)));
+      // sparkline: margem (A - B) em p.p. contra % de seções (0 a 100)
+      const W = 140, H = 44, pad = 2;
+      const svg = document.createElementNS(NS, "svg"); svg.setAttribute("viewBox", "0 0 " + W + " " + H); svg.setAttribute("width", "100%");
+      svg.setAttribute("role", "img");
+      const mk = (tag, at) => { const e = document.createElementNS(NS, tag); for (const k in at) e.setAttribute(k, at[k]); svg.append(e); return e; };
+      const pts = arr.map(p => ({x: p.pst, m: p.a - p.b}));
+      if (d && d.vv && (!pts.length || pts[pts.length-1].x !== +d.pst.toFixed(2))) pts.push({x: d.pst, m: a - b});
+      const lim = Math.max(5, ...pts.map(p => Math.abs(p.m))) * 1.1;
+      const X = v => pad + v / 100 * (W - 2 * pad), Y = v => H / 2 - v / lim * (H / 2 - pad);
+      mk("rect", {x: X(0), y: pad, width: X(100) - X(0), height: H - 2 * pad, fill: "var(--track)", opacity: .45, rx: 3});
+      mk("line", {x1: X(0), x2: X(100), y1: Y(0), y2: Y(0), stroke: "var(--muted)", "stroke-width": 1, "stroke-dasharray": "3 3"});
+      if (pts.length >= 2){
+        const dA = "M" + X(pts[0].x).toFixed(1) + " " + Y(0) + pts.map(p => " L" + X(p.x).toFixed(1) + " " + Y(Math.max(0, p.m)).toFixed(1)).join("") + " L" + X(pts[pts.length-1].x).toFixed(1) + " " + Y(0) + "Z";
+        const dB = "M" + X(pts[0].x).toFixed(1) + " " + Y(0) + pts.map(p => " L" + X(p.x).toFixed(1) + " " + Y(Math.min(0, p.m)).toFixed(1)).join("") + " L" + X(pts[pts.length-1].x).toFixed(1) + " " + Y(0) + "Z";
+        mk("path", {d: dA, fill: "var(--c1)", opacity: .25});
+        mk("path", {d: dB, fill: "var(--c2)", opacity: .25});
+        mk("path", {d: pts.map((p, i) => (i ? "L" : "M") + X(p.x).toFixed(1) + " " + Y(p.m).toFixed(1)).join(" "), fill: "none", stroke: "var(--ink)", "stroke-width": 1.4, "stroke-linejoin": "round"});
+      }
+      if (pts.length){
+        const L = pts[pts.length - 1];
+        mk("circle", {cx: X(L.x), cy: Y(L.m), r: 2.8, fill: L.m >= 0 ? "var(--c1)" : "var(--c2)"});
+      }
+      svg.setAttribute("aria-label", u + ": " + (pts.length ? "vantagem de " + fmtPct(Math.abs(pts[pts.length-1].m), 1).replace("%", " p.p.") + " para " + (pts[pts.length-1].m >= 0 ? A.nome : B.nome) : "sem dados"));
+      const tm = el("div", "tm num", pts.length ? "Vantagem " + fmtPct(Math.abs(pts[pts.length-1].m), 1).replace("%", " p.p.") + " · " + (pts[pts.length-1].m >= 0 ? A.nome.split(" ")[0] : B.nome.split(" ")[0]) : "aguardando");
+      t.append(th, tv, svg, tm);
+      t.addEventListener("click", () => { evoKey = u; $("evoSel").value = u; drawEvo(); renderTiles(A, B); document.querySelector(".evo").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start"}); });
+      grid.append(t);
+    });
+    wrap.append(grid); host.append(wrap);
+  });
+}
+
 /* relógio */
 function tick(){
   const left = Math.max(0, Math.ceil((nextAt - Date.now())/1000));
@@ -452,7 +683,7 @@ function tick(){
   if (!busy && left <= 0) cycle();
 }
 $("refresh").addEventListener("click", () => { if (!busy) cycle(); });
-let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (cands) renderChart(cands[0], cands[1]); }, 150); });
+let rz; window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { if (cands){ drawEvo(); renderTiles(cands[0], cands[1]); } }, 150); });
 document.addEventListener("visibilitychange", () => { if (!document.hidden && Date.now() > nextAt) cycle(); });
 
 cycle();
