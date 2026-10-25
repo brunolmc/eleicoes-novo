@@ -139,7 +139,7 @@ button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
       <span class="chip num" title="Horário da última totalização publicada pelo TSE (Brasília)">TSE <span id="tseTime">-</span></span>
       <span class="chip num">
         <svg class="ring" viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="none" stroke="var(--track)" stroke-width="3"/><circle id="ringArc" cx="10" cy="10" r="8" fill="none" stroke="var(--ink)" stroke-width="3" stroke-dasharray="50.27" stroke-dashoffset="0" transform="rotate(-90 10 10)"/></svg>
-        <span id="countdown">15s</span>
+        <span id="countdown">8s</span>
       </span>
       <button id="refresh" type="button">Atualizar agora</button>
     </div>
@@ -187,7 +187,7 @@ button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
   </section>
 
   <footer class="foot">
-    <span>Fonte: arquivos oficiais de divulgação do TSE, eleição 6258 (resultados.tse.jus.br). Atualização automática a cada 15 segundos.</span>
+    <span>Fonte: arquivos oficiais de divulgação do TSE, eleição 6258 (resultados.tse.jus.br). Atualização automática a cada 8 segundos.</span>
     <span>Percentuais sobre votos válidos. Regiões calculadas pela soma de votos e seções dos estados; o TSE não publica esse recorte.</span>
     <span>Portal oficial: <a href="https://resultados.tse.jus.br/oficial/app/index.html" target="_blank" rel="noopener">resultados.tse.jus.br</a></span>
   </footer>
@@ -197,7 +197,7 @@ button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
 (function(){
 const ELE = "6258";
 const BASE = "https://resultados.tse.jus.br/oficial/ele2026/" + ELE + "/dados/";
-const INTERVAL = 15;
+const INTERVAL = 8;
 const REGIOES = [
   {id:"N",  nome:"Norte",        ufs:["AC","AM","AP","PA","RO","RR","TO"]},
   {id:"NE", nome:"Nordeste",     ufs:["AL","BA","CE","MA","PB","PE","PI","RN","SE"]},
@@ -275,7 +275,7 @@ async function cycle(){
   nextAt = Date.now() + INTERVAL * 1000;
   render();
   const br = store.BR;
-  if (!br){ setChip("err", "Sem conexão com o TSE"); showAlert("Não foi possível ler os dados do TSE. O painel tenta de novo a cada 15 segundos. Confira sua conexão ou abra o portal oficial."); return; }
+  if (!br){ setChip("err", "Sem conexão com o TSE"); showAlert("Não foi possível ler os dados do TSE. O painel tenta de novo a cada 8 segundos. Confira sua conexão ou abra o portal oficial."); return; }
   if (!brOk || falhas){ setChip("err", "Leitura parcial"); showAlert(falhas + " arquivo(s) não responderam nesta rodada. Os números desses estados são os da última leitura bem-sucedida."); }
   else { hideAlert(); setChip(br.pst >= 100 ? "done" : "live", br.pst >= 100 ? "Apuração concluída" : "Ao vivo"); }
 }
