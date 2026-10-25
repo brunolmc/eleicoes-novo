@@ -99,9 +99,10 @@ button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
 .reg .split .r{text-align:right}
 .reg .meta{display:flex;justify-content:space-between;font:400 12px/1.3 var(--f-mono);color:var(--muted);gap:8px;flex-wrap:wrap}
 .ufs{display:grid;gap:6px;border-top:1px solid var(--line);padding-top:10px}
-.uf{display:grid;grid-template-columns:28px 44px minmax(0,1fr) 44px 58px;gap:8px;align-items:center;font:400 12.5px/1 var(--f-mono)}
+.uf{display:grid;grid-template-columns:30px 92px minmax(36px,1fr) 92px 58px;gap:6px;align-items:center;font:400 12.5px/1 var(--f-mono)}
 .uf .sg{font-weight:500}
-.uf .pa{color:var(--c1);text-align:right} .uf .pb{color:var(--c2)}
+.uf .pa{color:var(--c1);text-align:right;white-space:nowrap} .uf .pb{color:var(--c2);white-space:nowrap}
+.uf .pa small,.uf .pb small{font-size:10.5px;opacity:.75;margin:0 3px}
 .uf .u{color:var(--muted);text-align:right;font-size:11px;white-space:nowrap}
 .ufp{margin-top:-2px;padding-bottom:5px;border-bottom:1px dotted var(--line)}
 .ufp:last-child{border-bottom:0;padding-bottom:0}
@@ -121,29 +122,6 @@ button:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
 #chart .ax{font:400 11px var(--f-mono);fill:var(--muted)}
 .tip{position:absolute;pointer-events:none;background:var(--ink);color:var(--panel);font:500 12px/1.35 var(--f-mono);padding:7px 9px;border-radius:7px;white-space:nowrap;transform:translate(-50%,-110%)}
 .empty{color:var(--muted);font:400 13px/1.4 var(--f-mono);padding:20px 0}
-/* Projeção */
-.proj{background:var(--panel);border:1px dashed var(--muted);border-radius:14px;padding:20px clamp(16px,3vw,32px);display:grid;gap:16px}
-.proj h2{margin:0;font:700 20px/1.1 var(--f-display);font-stretch:95%}
-.pm{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.pm .side{display:grid;gap:2px}
-.pm .side.r{text-align:right}
-.pm .lbl{font:600 13px/1.2 var(--f-body)}
-.pm .big{font:800 clamp(34px,5.5vw,54px)/1 var(--f-display);font-stretch:80%}
-.pm .side.a .big{color:var(--c1)} .pm .side.b .big{color:var(--c2)}
-.pm small{font:400 12px/1.3 var(--f-mono);color:var(--muted)}
-.pnote{font:400 12.5px/1.45 var(--f-mono);color:var(--muted);display:flex;flex-wrap:wrap;gap:4px 18px}
-.pnote b{color:var(--ink);font-weight:500}
-.tblw{overflow-x:auto;border:1px solid var(--line);border-radius:10px}
-.ptbl{width:100%;border-collapse:collapse;font:400 13px/1.3 var(--f-mono);min-width:560px}
-.ptbl th{font:500 11px/1.2 var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);text-align:right;padding:9px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
-.ptbl th:first-child,.ptbl td:first-child{text-align:left}
-.ptbl td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}
-.ptbl tr:last-child td{border-bottom:0}
-.ptbl tr.tot td{font-weight:500;background:color-mix(in srgb,var(--track) 55%,transparent)}
-.ptbl td.a{color:var(--c1)} .ptbl td.b{color:var(--c2)}
-.ptbl td .bar.sm{width:90px;display:inline-flex;vertical-align:middle}
-details.method summary{cursor:pointer;font:600 13px/1.3 var(--f-body)}
-details.method p{margin:8px 0 0;font:400 13px/1.55 var(--f-body);color:var(--muted);max-width:75ch}
 /* Linha do tempo por estado */
 .sel{font:500 13px/1 var(--f-body);color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px}
 .sel:focus-visible{outline:2px solid var(--c1);outline-offset:2px}
@@ -220,25 +198,6 @@ details.method p{margin:8px 0 0;font:400 13px/1.55 var(--f-body);color:var(--mut
     </div>
   </section>
 
-  <section class="proj" aria-labelledby="projTitle">
-    <div class="br-head">
-      <div>
-        <h2 id="projTitle">Projeção do resultado final</h2>
-        <div class="eyebrow" style="margin-top:7px">Estimativa deste painel com base no 1º turno · não é resultado do TSE</div>
-      </div>
-      <span class="chip num" id="projBase">-</span>
-    </div>
-    <div class="pm" id="projMain"><div class="empty">A projeção aparece quando as primeiras seções forem totalizadas.</div></div>
-    <div><div class="bar" id="projBar"><span class="a"></span><span class="b"></span><i class="mid"></i></div></div>
-    <div class="pnote num" id="projNote"></div>
-    <div class="tblw"><table class="ptbl" id="projTbl"></table></div>
-    <details class="method">
-      <summary>Como a projeção é calculada</summary>
-      <p>Para cada estado, os votos já apurados entram como estão. A parte que falta é estimada a partir do 1º turno: parte-se da divisão entre os dois candidatos naquele estado no 1º turno e aplica-se a variação que a região já mostra nas seções apuradas do 2º turno em relação a essa base. Assim, quem votou em outros candidatos no 1º turno é redistribuído conforme o padrão que a região está mostrando agora.</p>
-      <p>A quantidade de votos válidos que falta em cada estado é estimada pelo eleitorado das seções ainda não totalizadas. Nos estados com quase nada apurado, usa-se o total de votos válidos do 1º turno, ajustado pelo comparecimento observado no país. A faixa mostra o resultado se a variação regional nas seções restantes for 1,5 ponto maior ou menor.</p>
-      <p>Limitação: as primeiras seções apuradas costumam vir de áreas diferentes das últimas, por exemplo capitais antes do interior. A projeção fica mais confiável conforme a apuração avança.</p>
-    </details>
-  </section>
 
   <section>
     <div class="eyebrow" style="margin:4px 2px 10px">Por região · soma dos estados, sem exterior</div>
@@ -294,6 +253,8 @@ const n = s => s == null || s === "" ? 0 : parseFloat(String(s).replace(",", "."
 const fmtInt = v => Math.round(v).toLocaleString("pt-BR");
 const fmtPct = (v, d=2) => (isFinite(v) ? v : 0).toLocaleString("pt-BR",{minimumFractionDigits:d,maximumFractionDigits:d}) + "%";
 const short = v => v >= 1e6 ? (v/1e6).toLocaleString("pt-BR",{maximumFractionDigits:2}) + " mi" : fmtInt(v);
+const comp = v => v >= 1e6 ? (v/1e6).toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2}) + " mi" : v >= 1e4 ? Math.round(v/1e3).toLocaleString("pt-BR") + " mil" : fmtInt(v);
+function cell(cls, votes, pct, left){ const sp = el("span", cls); if (votes == null){ sp.textContent = "-"; return sp; } const b = el("b", null, comp(votes)); b.style.fontWeight = "500"; const sm = el("small", null, fmtPct(pct, 1)); if (left){ sp.append(sm, b); } else { sp.append(b, sm); } sp.title = fmtInt(votes) + " votos (" + fmtPct(pct, 2) + ")"; return sp; }
 function el(tag, cls, txt){ const e = document.createElement(tag); if(cls) e.className = cls; if(txt != null) e.textContent = txt; return e; }
 
 /* estado */
@@ -416,7 +377,6 @@ function render(){
   $("stAb").textContent = short(br.a); $("stAbSub").textContent = fmtPct(br.pa) + " do eleitorado apurado";
 
   renderRegions(A, B);
-  renderProj(A, B, br);
   pushHist(br, A, B);
   pushHistUF(A, B);
   fillSelect();
@@ -470,7 +430,7 @@ function renderRegions(A, B){
       const a = d ? vapOf(d, A.n) : 0, b = d ? vapOf(d, B.n) : 0, t = d ? d.vv : 0;
       const p1 = t ? a/t*100 : 0, p2 = t ? b/t*100 : 0;
       const sb = el("div", "bar sm"); sb.append(el("span","a"), el("span","b"), el("i","mid")); setBar(sb, p1, p2);
-      row.append(el("span","sg",u), el("span","pa", t ? fmtPct(p1,1) : "-"), sb, el("span","pb", t ? fmtPct(p2,1) : "-"), el("span","u", d ? fmtPct(d.pst,0) + " seç." : "-"));
+      row.append(el("span","sg",u), cell("pa", t ? a : null, p1, true), sb, cell("pb", t ? b : null, p2, false), el("span","u", d ? fmtPct(d.pst,0) + " seç." : "-"));
       row.title = u + ": " + (d ? fmtInt(a) + " x " + fmtInt(b) + " votos, " + fmtPct(d.pst) + " das seções" : "sem dados") + " | 1º turno: " + A.nome + " " + fmtPct(T1[u][A.n === "13" ? 0 : 1] / T1[u][2] * 100, 1) + ", " + B.nome + " " + fmtPct(T1[u][A.n === "13" ? 1 : 0] / T1[u][2] * 100, 1);
       ufs.append(row);
       const r1 = T1[u];
@@ -479,7 +439,7 @@ function renderRegions(A, B){
         const q1 = r1[iA] / r1[2] * 100, q2 = r1[1 - iA] / r1[2] * 100;
         const pr = el("div", "uf ufp num");
         const qb = el("div", "bar sm"); qb.append(el("span","a"), el("span","b"), el("i","mid")); setBar(qb, q1, q2);
-        pr.append(el("span", "sg", "1º T"), el("span", "pa", fmtPct(q1, 1)), qb, el("span", "pb", fmtPct(q2, 1)), el("span", "u", "1º turno"));
+        pr.append(el("span", "sg", "1º T"), cell("pa", r1[iA], q1, true), qb, cell("pb", r1[1 - iA], q2, false), el("span", "u", "1º turno"));
         pr.title = "Resultado final do 1º turno em " + u + ": " + A.nome + " " + fmtPct(q1, 1) + ", " + B.nome + " " + fmtPct(q2, 1) + " (sobre todos os votos válidos; o restante foi para outros candidatos)";
         ufs.append(pr);
       }
@@ -551,84 +511,6 @@ function renderChart(A, B, hist){
     tip.style.left = left + "px"; tip.style.top = (Math.min(Y(best.a),Y(best.b)) * r.height / H) + "px";
   });
   hit.addEventListener("pointerleave", () => { tip.hidden = true; guide.setAttribute("opacity",0); });
-}
-
-
-/* projeção */
-function projetar(A, B){
-  const iA = A.n === "13" ? 0 : 1;
-  const ufs = ALL_UFS.concat(["ZZ"]);
-  let num = 0, den = 0;
-  ufs.forEach(u => { const d = store[u], t = T1[u]; if (d && t && d.te && d.est){ num += d.vv; den += t[2] * d.est / d.te; } });
-  const turn = den > 0 ? num / den : 1;
-  const base = u => { const t = T1[u]; return t[0] + t[1] ? t[iA] / (t[0] + t[1]) : .5; };
-  const swingOf = list => {
-    let w = 0, s = 0;
-    list.forEach(u => { const d = store[u]; if (!d || !T1[u]) return; const a = vapOf(d, A.n), b = vapOf(d, B.n); if (a + b <= 0) return; s += (a + b) * (a / (a + b) - base(u)); w += a + b; });
-    return w > 0 ? s / w : null;
-  };
-  const swNat = swingOf(ufs);
-  const clamp = x => Math.min(.99, Math.max(.01, x));
-  function uf(u, sw){
-    const d = store[u], t = T1[u];
-    const a = d ? vapOf(d, A.n) : 0, b = d ? vapOf(d, B.n) : 0, vv = d ? d.vv : 0;
-    const fe = d && d.te ? d.est / d.te : 0;
-    const exp = fe >= 0.05 ? vv / fe : Math.max(vv, t[2] * turn);
-    const rem = Math.max(0, exp - vv);
-    const sh = clamp(base(u) + sw), lo = clamp(base(u) + sw - .015), hi = clamp(base(u) + sw + .015);
-    return {a: a + rem * sh, b: b + rem * (1 - sh), aLo: a + rem * lo, aHi: a + rem * hi, rem, ca: a, cb: b};
-  }
-  const sum = list => list.reduce((o, x) => { for (const k in x) o[k] = (o[k] || 0) + x[k]; return o; }, {});
-  const byUF = {};
-  const regs = REGIOES.map(R => {
-    const s = swingOf(R.ufs), sw = s == null ? (swNat || 0) : s;
-    const tot = sum(R.ufs.map(u => (byUF[u] = uf(u, sw))));
-    return Object.assign({nome: R.nome, sw, obs: s != null}, tot);
-  });
-  const zz = uf("ZZ", swNat || 0);
-  const nat = sum(regs.map(r => ({a:r.a, b:r.b, aLo:r.aLo, aHi:r.aHi, rem:r.rem, ca:r.ca, cb:r.cb})).concat([zz]));
-  return {regs, nat, swNat, byUF};
-}
-
-function renderProj(A, B, br){
-  const main = $("projMain"), tbl = $("projTbl"), note = $("projNote");
-  $("projBase").textContent = "Base: " + fmtPct(br.pst, 1) + " das seções";
-  if (!br.st){ return; }
-  const P = projetar(A, B), N = P.nat, tot = N.a + N.b;
-  const pa = N.a / tot * 100, pb = N.b / tot * 100;
-  main.replaceChildren();
-  [[A, pa, N.a, "a"], [B, pb, N.b, "b"]].forEach(([c, p, v, k], i) => {
-    const s = el("div", "side " + k + (i ? " r" : ""));
-    s.append(el("span", "lbl", c.nome), el("span", "big num", fmtPct(p)), el("small", "num", "≈ " + fmtInt(v) + " votos projetados"));
-    main.append(s);
-  });
-  setBar($("projBar"), pa, pb);
-  const lo = N.aLo / tot * 100, hi = N.aHi / tot * 100;
-  note.replaceChildren();
-  const lead = N.a >= N.b ? A : B;
-  const add = (t, b) => { const sp = el("span", null, t); if (b){ sp.append(el("b", null, b)); } note.append(sp); };
-  add("Diferença projetada: ", fmtInt(Math.abs(N.a - N.b)) + " votos para " + lead.nome);
-  add("Faixa de " + A.nome + ": ", fmtPct(lo, 1) + " a " + fmtPct(hi, 1));
-  add("Votos válidos ainda a apurar (estimativa): ", short(N.rem));
-
-  tbl.replaceChildren();
-  const thead = el("thead"), hr = el("tr");
-  ["Região", "Apurado " + A.nome, "Projeção " + A.nome, "", "Projeção " + B.nome, "Variação vs 1º turno", "A apurar (est.)"].forEach(h => hr.append(el("th", null, h)));
-  thead.append(hr); tbl.append(thead);
-  const tb = el("tbody");
-  const row = (nome, r, sw, obs, isTot) => {
-    const t = r.a + r.b, ca = r.ca + r.cb;
-    const tr = el("tr", isTot ? "tot" : "");
-    const pA = r.a / t * 100, pB = r.b / t * 100;
-    const sb = el("div", "bar sm"); sb.append(el("span", "a"), el("span", "b"), el("i", "mid")); setBar(sb, pA, pB);
-    const tdBar = el("td"); tdBar.append(sb);
-    const swTxt = sw == null ? "-" : (Math.abs(sw) < .0005 ? "0,0 p.p." : "+" + fmtPct(Math.abs(sw) * 100, 1).replace("%", " p.p. ") + (sw > 0 ? A.nome : B.nome)) + (obs === false ? " *" : "");
-    tr.append(el("td", null, nome), el("td", "a", ca ? fmtPct(r.ca / ca * 100, 1) : "-"), el("td", "a", fmtPct(pA, 1)), tdBar, el("td", "b", fmtPct(pB, 1)), el("td", null, swTxt), el("td", null, short(r.rem)));
-    tb.append(tr);
-  };
-  P.regs.forEach(r => row(r.nome, r, r.sw, r.obs, false));
-  row("Brasil (com exterior)", N, P.swNat, true, true);
-  tbl.append(tb);
 }
 
 
